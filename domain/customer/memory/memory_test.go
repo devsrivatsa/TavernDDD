@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func TestMemoryStore_GetCustomer(t *testing.T) {
+func TestMemoryStore_Get(t *testing.T) {
 	type testCase struct {
 		name          string
 		id            uuid.UUID
@@ -40,7 +40,7 @@ func TestMemoryStore_GetCustomer(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			_, err := repo.GetCustomer(tc.id)
+			_, err := repo.Get(tc.id)
 			if !errors.Is(err, tc.expectedError) {
 				t.Errorf("expected error %v, got %v", tc.expectedError, err)
 			}

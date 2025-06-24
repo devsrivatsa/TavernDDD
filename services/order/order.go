@@ -1,4 +1,4 @@
-package services
+package order
 
 import (
 	"log"
@@ -85,7 +85,7 @@ func WithMemoryProductRepository(products []product.Product) OrderConfiguration 
 func (o *OrderService) CreateOrder(curstomerID uuid.UUID, productsID []uuid.UUID) (float64, error) {
 	//fetch the customer
 
-	customer, err := o.customers.GetCustomer(curstomerID)
+	customer, err := o.customers.Get(curstomerID)
 	if err != nil {
 		log.Printf("error fetching customer: %v", err)
 		return 0, err
@@ -105,4 +105,17 @@ func (o *OrderService) CreateOrder(curstomerID uuid.UUID, productsID []uuid.UUID
 	log.Printf("Customer %s is ordering %d products for a total of %.2f", customer.GetName(), len(products), totalPrice)
 
 	return totalPrice, nil
+}
+
+func (o *OrderService) AddCustomer(name string) (uuid.UUID, error) {
+	c, err := customer.NewCustomer(name)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	err = o.customers.Add(c)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	return c.GetID(), nil
 }

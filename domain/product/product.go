@@ -3,7 +3,7 @@ package product
 import (
 	"errors"
 
-	"github.com/devsrivatsa/tavernDDD/entity"
+	"github.com/devsrivatsa/tavernDDD/domain"
 	"github.com/google/uuid"
 )
 
@@ -14,7 +14,7 @@ var (
 )
 
 type Product struct {
-	item     *entity.Item
+	item     *domain.Item
 	price    float64
 	quantity int
 }
@@ -25,7 +25,7 @@ func NewProduct(name, description string, price float64) (Product, error) {
 		return Product{}, ErrMissingValue
 	}
 	return Product{
-		item: &entity.Item{
+		item: &domain.Item{
 			ID:          uuid.New(),
 			Name:        name,
 			Description: description,
@@ -40,7 +40,7 @@ func NewProduct(name, description string, price float64) (Product, error) {
 func (p Product) GetID() uuid.UUID {
 	return p.item.ID
 }
-func (p Product) GetItem() *entity.Item {
+func (p Product) GetItem() *domain.Item {
 	return p.item
 }
 func (p Product) GetPrice() float64 {

@@ -3,8 +3,7 @@ package customer
 import (
 	"errors"
 
-	"github.com/devsrivatsa/tavernDDD/entity"
-	"github.com/devsrivatsa/tavernDDD/valueobject"
+	"github.com/devsrivatsa/tavernDDD/domain"
 	"github.com/google/uuid"
 )
 
@@ -14,24 +13,24 @@ var (
 
 type Customer struct {
 	//person is the root entity of the customer aggregate
-	person       *entity.Person
-	products     []*entity.Item
-	transactions []valueobject.Transaction
+	person       *domain.Person
+	products     []*domain.Item
+	transactions []domain.Transaction
 }
 
 func NewCustomer(name string) (Customer, error) {
 	if name == "" {
 		return Customer{}, ErrInvalidPerson
 	}
-	person := &entity.Person{
+	person := &domain.Person{
 		Name: name,
 		ID:   uuid.New(),
 	}
 
 	return Customer{
 		person:       person,
-		products:     make([]*entity.Item, 0),
-		transactions: make([]valueobject.Transaction, 0),
+		products:     make([]*domain.Item, 0),
+		transactions: make([]domain.Transaction, 0),
 	}, nil
 }
 
@@ -41,7 +40,7 @@ func (c *Customer) GetID() uuid.UUID {
 
 func (c *Customer) SetID(id uuid.UUID) {
 	if c.person == nil {
-		c.person = &entity.Person{}
+		c.person = &domain.Person{}
 	}
 	c.person.ID = id
 }
@@ -52,6 +51,6 @@ func (c *Customer) GetName() string {
 
 func (c *Customer) SetName(name string) {
 	if c.person == nil {
-		c.person = &entity.Person{}
+		c.person = &domain.Person{}
 	}
 }

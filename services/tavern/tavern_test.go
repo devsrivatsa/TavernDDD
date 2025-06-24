@@ -1,10 +1,10 @@
-package services
+package tavern
 
 import (
 	"testing"
 
-	"github.com/devsrivatsa/tavernDDD/domain/customer"
 	"github.com/devsrivatsa/tavernDDD/domain/product"
+	"github.com/devsrivatsa/tavernDDD/services/order"
 	"github.com/google/uuid"
 )
 
@@ -25,31 +25,29 @@ func init_products(t *testing.T) []product.Product {
 	return []product.Product{beer, peanuts, wine}
 }
 
-func TestOrder_NewOrderService(t *testing.T) {
+func TestTavern_Order(t *testing.T) {
 	products := init_products(t)
-	or, err := NewOrderService(
-		WithMemoryCustomerRepository(),
-		WithMemoryProductRepository(products),
+	ordSrvc, err := order.NewOrderService(
+		order.WithMemoryProductRepository(products),
+		order.WithMemoryCustomerRepository(),
 	)
 	if err != nil {
-		t.Errorf("Error creating order service: %v", err)
+		t.Fatalf("%v: Error creating order service: %v", t.Name(), err)
 	}
-	t.Log("Order service created")
 
-	customerID, err := customer.NewCustomer("John Doe")
+	tavern, err := NewTavern(WithOrderService(ordSrvc))
 	if err != nil {
-		t.Errorf("Error creating customer: %v", err)
+		t.Fatalf("%v: Error creating tavern: %v", t.Name(), err)
 	}
-	err = or.customers.AddCustomer(customerID)
+
+	customerID, err := ordSrvc.AddCustomer("John Doe")
 	if err != nil {
-		t.Errorf("Error adding customer: %v", err)
+		t.Fatalf("%v: Error adding customer: %v", t.Name(), err)
 	}
-	t.Log("Customer created and added to the order service")
 	order := []uuid.UUID{products[0].GetID()}
-
-	_, err = or.CreateOrder(customerID.GetID(), order)
+	err = tavern.Order(customerID, order)
 	if err != nil {
-		t.Fatalf("Error creating order: %v", err)
+		t.Fatalf("%v: Error ordering: %v", t.Name(), err)
 	}
-	t.Log("Order created")
+	t.Logf("%v: Order successful", t.Name())
 }
